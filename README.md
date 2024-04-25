@@ -14,15 +14,20 @@ go install github.com/kronotop/kronotop-fdb-proxy
 
 ```
 >> kronotop-fdb-proxy --help
-A MITM proxy to inspect the traffic between Kronotop and FoundationDB clusters.
+An MITM proxy to inspect the traffic between Kronotop and FoundationDB clusters.
 
 Usage:
   kronotop-fdb-proxy [flags]
 
 Flags:
-  -h, --help       help for kronotop-fdb-proxy
-  -p, --port int   Port to listen (default 8080)
-  -v, --version    version for kronotop-fdb-proxy
+      --fdb-host string         FDB host (default "localhost")
+      --fdb-port int            FDB port (default 4689)
+      --grace-period duration   maximum time period to wait before shutting down the proxy (default 5s)
+  -h, --help                    help for kronotop-fdb-proxy
+      --host string             host to bind (default "localhost")
+  -n, --network string          network to use (default "tcp")
+  -p, --port int                port to listen (default 8080)
+  -v, --version                 version for kronotop-fdb-proxy
 ```
 
 ## Contributions
