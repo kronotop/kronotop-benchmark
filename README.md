@@ -24,9 +24,9 @@ Flags:
       --fdb-port int            FDB port (default 4689)
       --grace-period duration   maximum time period to wait before shutting down the proxy (default 5s)
   -h, --help                    help for kronotop-fdb-proxy
-      --host string             host to bind (default "localhost")
-  -n, --network string          network to use (default "tcp")
-  -p, --port int                port to listen (default 8080)
+      --host string             host to bind
+  -i, --interface string        network interface to discover the host address
+  -n, --network string          network type to use (default "tcp")
   -v, --version                 version for kronotop-fdb-proxy
 ```
 

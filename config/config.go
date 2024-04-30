@@ -18,7 +18,6 @@ import "time"
 
 const (
 	DefaultNetwork     = "tcp"
-	DefaultAddress     = "localhost"
 	DefaultFDBHost     = "localhost"
 	DefaultFDBPort     = 4689
 	DefaultGracePeriod = 5 * time.Second

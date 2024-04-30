@@ -2,7 +2,7 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// You may obtain a pipe of the License at
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
@@ -20,6 +20,7 @@ import (
 	"net"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/kronotop/kronotop-fdb-proxy/config"
@@ -29,6 +30,7 @@ import (
 
 // Proxy represents a proxy server that forwards network traffic between Kronotop and FoundationDB clusters.
 type Proxy struct {
+	connId   atomic.Int64
 	config   *config.Config
 	listener net.Listener
 	wg       sync.WaitGroup
@@ -46,8 +48,19 @@ func New(config *config.Config) *Proxy {
 	}
 }
 
-// processConn is a method of the Proxy struct that is responsible for handling a connection.
-func (p *Proxy) processConn(conn net.Conn) {
+func (p *Proxy) pipe(connId int64, dst io.Writer, src io.Reader) {
+	defer p.wg.Done()
+
+	nr, err := io.Copy(dst, src)
+	if err != nil {
+		log.Err(err).Msg("Failed to accept connection")
+		return
+	}
+	log.Info().Int64("conn_id", connId).Int64("copied_bytes", nr)
+}
+
+// proxy is a method of the Proxy struct that is responsible for handling a connection.
+func (p *Proxy) proxy(connId int64, clientConn net.Conn) {
 	defer p.wg.Done()
 
 	addr := net.JoinHostPort(p.config.FdbHost, strconv.Itoa(p.config.FdbPort))
@@ -56,26 +69,12 @@ func (p *Proxy) processConn(conn net.Conn) {
 		panic(err)
 	}
 
-	clientConn := newConnWrapper(conn)
+	wrappedServerConn := newConnWrapper("server", connId, serverConn)
+	wrappedClientConn := newConnWrapper("client", connId, clientConn)
 
-	go func() {
-		n, err := io.Copy(serverConn, clientConn)
-		if err != nil {
-			log.Err(err).Msg("Failed to accept connection")
-			return
-		}
-		log.Info().Int64("copied bytes", n)
-	}()
-
-	go func() {
-		n, err := io.Copy(clientConn, serverConn)
-		if err != nil {
-			log.Err(err).Msg("Failed to accept connection")
-			return
-		}
-		log.Info().Int64("copied bytes", n)
-	}()
-
+	p.wg.Add(2)
+	go p.pipe(connId, wrappedServerConn, wrappedClientConn)
+	go p.pipe(connId, wrappedClientConn, wrappedServerConn)
 }
 
 // discoverHostAddress is a method of the Proxy struct that is responsible for discovering the host address.
@@ -131,8 +130,9 @@ L:
 				log.Err(err).Msg("Failed to accept connection")
 			}
 		} else {
+			connId := p.connId.Add(1)
 			p.wg.Add(1)
-			go p.processConn(conn)
+			go p.proxy(connId, conn)
 		}
 
 		select {

@@ -56,7 +56,7 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	rootCmd.Flags().StringVarP(&proxyConfig.Interface, "interface", "i", "", "network interface to discover the host address")
-	rootCmd.Flags().StringVarP(&proxyConfig.Host, "host", "", config.DefaultAddress, "host to bind")
+	rootCmd.Flags().StringVarP(&proxyConfig.Host, "host", "", "", "host to bind")
 	rootCmd.Flags().DurationVarP(&proxyConfig.GracePeriod, "grace-period", "", config.DefaultGracePeriod, "maximum time period to wait before shutting down the proxy")
 	rootCmd.Flags().StringVarP(&proxyConfig.Network, "network", "n", config.DefaultNetwork, "network type to use")
 	rootCmd.Flags().StringVarP(&proxyConfig.FdbHost, "fdb-host", "", config.DefaultFDBHost, "FDB host")
