@@ -63,6 +63,7 @@ var rootCmd = &cobra.Command{
 				log.Err(err).Msg("Failed to shutdown proxy")
 			}
 		}
+		log.Info().Msg("Quit!")
 	},
 }
 
