@@ -32,4 +32,5 @@ func main() {
 	}
 
 	cmd.Execute()
+	log.Info().Msg("Quit!")
 }

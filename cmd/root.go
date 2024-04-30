@@ -34,12 +34,24 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		p := proxy.New(&proxyConfig)
 
+		stopNow := func() {
+			log.Info().Msg("Press Ctrl-C or send a SIGTERM signal to shut down immediately")
+			// Handle SIGINT and SIGTERM.
+			sigChan := make(chan os.Signal, 1)
+			signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+			<-sigChan
+			os.Exit(1)
+		}
+
 		go func() {
 			// Handle SIGINT and SIGTERM.
 			sigChan := make(chan os.Signal, 1)
 			signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
 			<-sigChan
+
+			go stopNow()
 			if err := p.Shutdown(); err != nil {
 				log.Err(err).Msg("Failed to shutdown proxy")
 			}
