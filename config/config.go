@@ -19,7 +19,6 @@ import "time"
 const (
 	DefaultNetwork     = "tcp"
 	DefaultAddress     = "localhost"
-	DefaultPort        = 8080
 	DefaultFDBHost     = "localhost"
 	DefaultFDBPort     = 4689
 	DefaultGracePeriod = 5 * time.Second
@@ -29,7 +28,7 @@ type Config struct {
 	GracePeriod time.Duration
 	Network     string
 	Host        string
-	Port        int
+	Interface   string
 	FdbHost     string
 	FdbPort     int
 }

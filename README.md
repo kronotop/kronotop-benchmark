@@ -7,7 +7,7 @@ An MITM proxy to inspect the traffic between Kronotop and FoundationDB clusters.
 With a correctly configured Golang environment:
 
 ```shell
-go install github.com/kronotop/kronotop-fdb-proxy
+go install github.com/kronotop/kronotop-fdb-proxy@latest
 ```
 
 ## Usage
