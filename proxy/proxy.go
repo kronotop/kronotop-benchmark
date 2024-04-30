@@ -53,7 +53,7 @@ func (p *Proxy) pipe(connId int64, dst io.Writer, src io.Reader) {
 
 	nr, err := io.Copy(dst, src)
 	if err != nil {
-		log.Err(err).Msg("Failed to accept connection")
+		log.Err(err).Msg("Failed to pipe connection")
 		return
 	}
 	log.Info().Int64("conn_id", connId).Int64("copied_bytes", nr)

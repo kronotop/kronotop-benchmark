@@ -16,6 +16,7 @@ package main
 
 import (
 	"os"
+	"time"
 
 	"github.com/kronotop/kronotop-fdb-proxy/cmd"
 	"github.com/mattn/go-isatty"
@@ -24,10 +25,10 @@ import (
 )
 
 func main() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 
 	if isatty.IsTerminal(os.Stdout.Fd()) {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC1123})
 	}
 
 	cmd.Execute()
