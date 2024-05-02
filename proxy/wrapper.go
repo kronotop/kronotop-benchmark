@@ -34,14 +34,14 @@ func newConnWrapper(label string, connId int64, conn net.Conn) *ConnWrapper {
 	}
 }
 
-func (c *ConnWrapper) Read(b []byte) (n int, err error) {
-	n, err = c.Conn.Read(b)
-	log.Info().Int64("conn_id", c.connId).Str("label", c.label).Int("read_bytes", n).Msg("")
-	return n, err
+func (c *ConnWrapper) Read(b []byte) (nr int, err error) {
+	nr, err = c.Conn.Read(b)
+	log.Info().Int64("conn_id", c.connId).Str("label", c.label).Int("read_bytes", nr).Msg("")
+	return nr, err
 }
 
-func (c *ConnWrapper) Write(b []byte) (n int, err error) {
-	n, err = c.Conn.Write(b)
-	log.Info().Int64("conn_id", c.connId).Str("label", c.label).Int("write_bytes", n).Msg("")
-	return n, err
+func (c *ConnWrapper) Write(b []byte) (nr int, err error) {
+	nr, err = c.Conn.Write(b)
+	log.Info().Int64("conn_id", c.connId).Str("label", c.label).Int("write_bytes", nr).Msg("")
+	return nr, err
 }

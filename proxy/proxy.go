@@ -48,7 +48,7 @@ func New(config *config.Config) *Proxy {
 	}
 }
 
-func (p *Proxy) pipe(connId int64, dst io.Writer, src io.Reader) {
+func (p *Proxy) pipe(connId int64, destination string, dst io.WriteCloser, src io.ReadCloser) {
 	defer p.wg.Done()
 
 	nr, err := io.Copy(dst, src)
@@ -56,7 +56,7 @@ func (p *Proxy) pipe(connId int64, dst io.Writer, src io.Reader) {
 		log.Err(err).Msg("Failed to pipe connection")
 		return
 	}
-	log.Info().Int64("conn_id", connId).Int64("copied_bytes", nr)
+	log.Info().Str("destination", destination).Int64("conn_id", connId).Int64("piped_bytes", nr).Msg("")
 }
 
 // proxy is a method of the Proxy struct that is responsible for handling a connection.
@@ -73,8 +73,8 @@ func (p *Proxy) proxy(connId int64, clientConn net.Conn) {
 	wrappedClientConn := newConnWrapper("client", connId, clientConn)
 
 	p.wg.Add(2)
-	go p.pipe(connId, wrappedServerConn, wrappedClientConn)
-	go p.pipe(connId, wrappedClientConn, wrappedServerConn)
+	go p.pipe(connId, "client", wrappedClientConn, wrappedServerConn)
+	go p.pipe(connId, "server", wrappedServerConn, wrappedClientConn)
 }
 
 // discoverHostAddress is a method of the Proxy struct that is responsible for discovering the host address.
